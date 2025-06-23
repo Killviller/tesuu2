@@ -51,11 +51,14 @@
             background-color: var(--govce-border-color);
         }
         .process-card, .link-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
         }
         .process-card:hover, .link-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+        }
+        .link-card.primary-action:hover {
+             filter: brightness(110%);
         }
         .course-card {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -83,20 +86,20 @@
 
         <section id="hero" class="govce-hero text-white text-center py-20 md:py-28 rounded-3xl my-12">
             <h1 class="text-4xl md:text-6xl font-extrabold mb-4 drop-shadow-md">Pós-Graduação a Distância UECE/UAB</h1>
-            <p class="text-lg md:text-xl max-w-3xl mx-auto opacity-90">Chamada Pública Nº 55/2025: Explore o seu futuro com a chancela do Governo do Estado do Ceará.</p>
+            <p class="text-lg md:text-xl max-w-3xl mx-auto opacity-90">Chamada Pública 55/2025: Explore os cursos de especialização, entenda o processo seletivo e prepare-se para sua inscrição.</p>
         </section>
 
         <section id="acesso-rapido" class="py-16">
             <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-                <a href="https://www.uece.br/sate/wp-content/uploads/sites/58/2025/05/CP55.25-Edital.pdf" target="_blank" rel="noopener noreferrer" class="link-card block bg-white p-8 rounded-xl shadow-lg text-center">
-                    <div class="text-5xl mb-4">📢</div>
-                    <h3 class="text-2xl font-bold" style="color: var(--govce-dark-text);">Consultar Edital</h3>
+                <a href="https://www.uece.br/sate/wp-content/uploads/sites/58/2025/05/CP55.25-Edital.pdf" target="_blank" rel="noopener noreferrer" class="link-card block bg-white p-8 rounded-xl shadow-lg text-center border-2" style="border-color: var(--govce-green);">
+                    <div class="text-6xl mb-4">📢</div>
+                    <h3 class="text-2xl font-bold" style="color: var(--govce-green);">Consultar Edital</h3>
                     <p class="text-slate-600 mt-2">Acesse o documento oficial com todas as regras e informações do processo seletivo.</p>
                 </a>
-                <a href="https://forms.gle/1LB7mb58QmZaUKNM6" target="_blank" rel="noopener noreferrer" class="link-card block bg-white p-8 rounded-xl shadow-lg text-center">
-                    <div class="text-5xl mb-4">✍️</div>
-                    <h3 class="text-2xl font-bold" style="color: var(--govce-dark-text);">Formulário de Inscrição</h3>
-                    <p class="text-slate-600 mt-2">Pronto para começar? Clique aqui para preencher sua inscrição e garantir sua vaga.</p>
+                <a href="https://forms.gle/1LB7mb58QmZaUKNM6" target="_blank" rel="noopener noreferrer" class="link-card primary-action block p-8 rounded-xl shadow-lg text-center text-white" style="background-color: var(--govce-green);">
+                    <div class="text-6xl mb-4">✍️</div>
+                    <h3 class="text-2xl font-bold">Formulário de Inscrição</h3>
+                    <p class="opacity-90 mt-2">Pronto para começar? Clique aqui para preencher sua inscrição e garantir sua vaga.</p>
                 </a>
             </div>
         </section>
