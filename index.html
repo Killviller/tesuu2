@@ -8,119 +8,139 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Calm Academia -->
-    <!-- Application Structure Plan: A single-page application with a sticky top navigation bar for quick access to key sections. The structure is task-oriented, designed to answer user questions sequentially: What courses are available? (Interactive Dashboard), What is the process? (Visual Stepper), What are the deadlines? (Interactive Timeline), How do I pay? (Clear Guide), and Where is my local support center? (Searchable List). This non-linear, user-centric structure is superior to the original PDF's linear format, allowing candidates to find relevant information instantly without navigating dense text. -->
-    <!-- Visualization & Content Choices: 
-        - Report Info: Full list of courses/vacancies -> Goal: Organize/Explore -> Viz/Method: Interactive Card Grid with Filters -> Interaction: Dropdown/text input filters for course and polo -> Justification: The original table is too long. Filtering allows users to quickly find relevant opportunities. -> Library/Method: Vanilla JS, Tailwind CSS.
-        - Report Info: Multi-step selection process -> Goal: Organize -> Viz/Method: HTML/CSS Stepper -> Interaction: Static -> Justification: A visual stepper is more intuitive for understanding a multi-stage process than a text block. -> Library/Method: HTML/Tailwind.
-        - Report Info: Full timeline of events -> Goal: Change/Inform -> Viz/Method: Vertical Timeline with Dynamic Highlighting -> Interaction: JS highlights the next upcoming event -> Justification: Immediately answers "what's next?" for the user. -> Library/Method: Vanilla JS, Tailwind CSS.
-        - Report Info: Payment/Polo information -> Goal: Inform/Explore -> Viz/Method: Comparison boxes and a searchable list -> Interaction: Static and Search Input -> Justification: Prevents user error in payment and provides faster access to contact info than a static list. -> Library/Method: HTML/Tailwind, Vanilla JS. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #F8F7F4;
-            color: #4A4A4A;
+            background-color: #f7f8fc;
+            color: #334155;
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
         .timeline-item::before {
             content: '';
             position: absolute;
-            left: -30px;
+            left: -33px;
             top: 5px;
-            width: 20px;
-            height: 20px;
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
-            background-color: #D1D5DB;
-            border: 3px solid #F8F7F4;
+            background-color: #cbd5e1;
+            border: 4px solid #f7f8fc;
+            z-index: 1;
         }
         .timeline-item.highlight::before {
-            background-color: #3B82F6;
+            background-color: #3b82f6;
+            animation: pulse 2s infinite;
         }
         .timeline-path::before {
             content: '';
             position: absolute;
             left: -21px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background-color: #E5E7EB;
+            top: 5px;
+            bottom: 5px;
+            width: 3px;
+            background-color: #e2e8f0;
+        }
+        .process-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .process-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .course-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+        }
+        .modal-backdrop {
+            transition: opacity 0.3s ease;
+        }
+        .modal-content {
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
         }
     </style>
 </head>
 <body class="antialiased">
 
-    <main class="container mx-auto px-6 py-12">
+    <main class="container mx-auto px-4 md:px-6">
 
-        <section id="hero" class="text-center py-16">
-            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Pós-Graduação a Distância UECE/UAB</h1>
-            <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-8">Chamada Pública Nº 55/2025: Explore os cursos de especialização, entenda o processo seletivo e prepare-se para sua inscrição.</p>
-            <a href="#cursos" class="bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 transition-colors">Ver Cursos Disponíveis</a>
+        <section id="hero" class="hero-gradient text-white text-center py-20 md:py-28 rounded-3xl my-12">
+            <h1 class="text-4xl md:text-6xl font-extrabold mb-4 drop-shadow-md">Pós-Graduação a Distância UECE/UAB</h1>
+            <p class="text-lg md:text-xl max-w-3xl mx-auto opacity-90">Chamada Pública Nº 55/2025: Uma nova forma de explorar o seu futuro.</p>
         </section>
 
         <section id="cursos" class="py-16">
             <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold text-gray-800">Cursos e Vagas</h2>
-                <p class="text-gray-600 mt-2">Filtre por curso ou polo para encontrar a oportunidade ideal para você.</p>
+                <h2 class="text-4xl font-bold text-slate-800">Cursos e Vagas</h2>
+                <p class="text-slate-500 mt-2 text-lg">Filtre e clique em um curso para ver os polos disponíveis.</p>
             </div>
 
-            <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-md mb-8 max-w-4xl mx-auto">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label for="filtro-curso" class="block text-sm font-medium text-gray-700 mb-1">Filtrar por nome do curso</label>
-                        <input type="text" id="filtro-curso" placeholder="Ex: Gestão em Saúde" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                        <label for="filtro-curso" class="block text-sm font-medium text-slate-700 mb-1">Filtrar por nome do curso</label>
+                        <input type="text" id="filtro-curso" placeholder="Ex: Gestão em Saúde" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition">
                     </div>
                     <div>
-                        <label for="filtro-polo" class="block text-sm font-medium text-gray-700 mb-1">Filtrar por polo (cidade)</label>
-                        <select id="filtro-polo" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                        <label for="filtro-polo" class="block text-sm font-medium text-slate-700 mb-1">Filtrar por polo (cidade)</label>
+                        <select id="filtro-polo" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition">
                             <option value="">Todos os Polos</option>
                         </select>
                     </div>
                 </div>
             </div>
 
-            <div id="lista-cursos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div id="cursos-card-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
             </div>
             
             <div class="text-center mt-12" id="nenhum-curso" style="display: none;">
-                <p class="text-gray-500 text-lg">Nenhum curso encontrado com os filtros aplicados.</p>
+                <p class="text-slate-500 text-lg">Nenhum curso encontrado com os filtros aplicados.</p>
             </div>
-
         </section>
 
-        <section id="processo" class="py-16 bg-blue-50/50 rounded-lg">
+        <section id="processo" class="py-16">
             <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold text-gray-800">Etapas do Processo Seletivo</h2>
-                <p class="text-gray-600 mt-2">Entenda as fases da seleção, desde a inscrição até o resultado final.</p>
+                <h2 class="text-4xl font-bold text-slate-800">Etapas do Processo Seletivo</h2>
+                <p class="text-slate-500 mt-2 text-lg">Um guia visual sobre as fases da seleção.</p>
             </div>
 
-            <div class="flex flex-col md:flex-row justify-center items-start gap-8 px-4">
-                <div class="flex-1 text-center p-6 bg-white rounded-lg shadow-md border-t-4 border-blue-500">
-                    <div class="text-3xl font-bold text-blue-600 mb-2">1ª Etapa</div>
-                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Análise de Documentação</h3>
-                    <p class="text-gray-600">Fase eliminatória. A comissão verificará se todos os documentos obrigatórios foram enviados corretamente no ato da inscrição. Inscrições com pendências serão indeferidas.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
+                <div class="process-card text-center p-8 bg-white rounded-xl shadow-lg border-b-4 border-indigo-500">
+                    <div class="text-5xl mb-4">📄</div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-2">1. Documentação</h3>
+                    <p class="text-slate-600">Fase eliminatória. Envie corretamente todos os documentos solicitados no ato da inscrição para ter sua candidatura validada.</p>
                 </div>
 
-                <div class="flex-1 text-center p-6 bg-white rounded-lg shadow-md border-t-4 border-blue-500">
-                     <div class="text-3xl font-bold text-blue-600 mb-2">2ª Etapa</div>
-                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Prova de Conhecimentos Online</h3>
-                    <p class="text-gray-600">Fase eliminatória e classificatória. Consiste em uma prova online com 20 questões de múltipla escolha, baseadas no Projeto Pedagógico do curso escolhido.</p>
+                <div class="process-card text-center p-8 bg-white rounded-xl shadow-lg border-b-4 border-indigo-500">
+                    <div class="text-5xl mb-4">💻</div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-2">2. Prova Online</h3>
+                    <p class="text-slate-600">Fase eliminatória e classificatória. Teste os seus conhecimentos com uma prova online de 20 questões de múltipla escolha.</p>
                 </div>
 
-                <div class="flex-1 text-center p-6 bg-white rounded-lg shadow-md border-t-4 border-blue-500">
-                     <div class="text-3xl font-bold text-blue-600 mb-2">3ª Etapa</div>
-                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Avaliação de Títulos</h3>
-                    <p class="text-gray-600">Fase classificatória. Análise do currículo do candidato, pontuando formação acadêmica (especialização, mestrado, doutorado) e experiência profissional relevante.</p>
+                <div class="process-card text-center p-8 bg-white rounded-xl shadow-lg border-b-4 border-indigo-500">
+                    <div class="text-5xl mb-4">🏆</div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-2">3. Avaliação de Títulos</h3>
+                    <p class="text-slate-600">Fase classificatória. O seu currículo e experiência profissional contam pontos e ajudam a definir a sua posição final.</p>
                 </div>
             </div>
         </section>
         
         <section id="cronograma" class="py-16">
             <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold text-gray-800">Cronograma de Eventos</h2>
-                <p class="text-gray-600 mt-2">Datas importantes do processo seletivo. O evento em destaque é o próximo passo.</p>
+                <h2 class="text-4xl font-bold text-slate-800">Cronograma de Eventos</h2>
+                <p class="text-slate-500 mt-2 text-lg">Acompanhe as datas mais importantes. O próximo evento está em destaque.</p>
             </div>
-            <div class="max-w-3xl mx-auto">
+            <div class="max-w-3xl mx-auto bg-white p-8 md:p-12 rounded-xl shadow-lg">
                 <div id="timeline-container" class="relative pl-8 timeline-path">
                 </div>
             </div>
@@ -128,47 +148,41 @@
 
         <section id="inscricao" class="py-16">
             <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold text-gray-800">Guia de Inscrição e Pagamento</h2>
-                <p class="text-gray-600 mt-2">Siga os passos para uma inscrição e pagamento bem-sucedidos.</p>
+                <h2 class="text-4xl font-bold text-slate-800">Guia de Inscrição</h2>
+                <p class="text-slate-500 mt-2 text-lg">Tudo o que precisa para uma inscrição tranquila.</p>
             </div>
-            <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
-                <h3 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-4">Taxa de Inscrição: R$ 100,00</h3>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div>
-                        <h4 class="text-xl font-semibold text-gray-700 mb-3">Opção 1: Depósito Bancário</h4>
-                        <p class="mb-4 text-gray-600">Realize o pagamento diretamente em uma agência do Banco do Brasil.</p>
-                        <ul class="space-y-2 text-gray-700">
-                            <li><span class="font-semibold">Banco:</span> Banco do Brasil</li>
-                            <li><span class="font-semibold">Agência:</span> 008-6</li>
-                            <li><span class="font-semibold">Conta-Corrente:</span> 27.447-X</li>
-                            <li><span class="font-semibold">Beneficiário:</span> Instituto de Estudos, Pesquisas e Projetos da UECE (IEPRO/SATE)</li>
-                        </ul>
-                         <p class="mt-4 text-sm text-blue-700 bg-blue-100 p-3 rounded-lg">Importante: Guarde o comprovante de depósito original.</p>
-                    </div>
-                     <div>
-                        <h4 class="text-xl font-semibold text-gray-700 mb-3">Opção 2: Transferência (TED)</h4>
-                        <p class="mb-4 text-gray-600">Utilize o internet banking ou aplicativo do seu banco.</p>
-                        <ul class="space-y-2 text-gray-700">
-                             <li><span class="font-semibold">Banco:</span> 001 - Banco do Brasil</li>
-                            <li><span class="font-semibold">Agência:</span> 0008 (sem dígito)</li>
-                            <li><span class="font-semibold">Conta-Corrente:</span> 27.447-0 (com dígito)</li>
-                            <li><span class="font-semibold">CNPJ:</span> 00.977.419/0001-06</li>
-                             <li><span class="font-semibold">Beneficiário:</span> Instituto de Estudos, Pesquisas e Projetos da UECE (IEPRO)</li>
-                        </ul>
-                         <p class="mt-4 text-sm text-blue-700 bg-blue-100 p-3 rounded-lg">Importante: Salve o comprovante digital da transação.</p>
+            <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-xl shadow-lg">
+                    <h3 class="text-2xl font-bold text-slate-800 mb-6 border-b pb-4">Pagamento da Taxa: R$ 100,00</h3>
+                    <div class="space-y-6">
+                        <div>
+                            <h4 class="text-xl font-semibold text-slate-700 mb-3">Opção 1: Depósito Bancário</h4>
+                            <ul class="space-y-2 text-slate-600">
+                                <li><span class="font-semibold">Banco:</span> Banco do Brasil</li>
+                                <li><span class="font-semibold">Agência:</span> 008-6</li>
+                                <li><span class="font-semibold">Conta-Corrente:</span> 27.447-X</li>
+                            </ul>
+                        </div>
+                         <div>
+                            <h4 class="text-xl font-semibold text-slate-700 mb-3">Opção 2: Transferência (TED)</h4>
+                            <ul class="space-y-2 text-slate-600">
+                                <li><span class="font-semibold">Agência:</span> 0008</li>
+                                <li><span class="font-semibold">Conta-Corrente:</span> 27.447-0</li>
+                                <li><span class="font-semibold">CNPJ:</span> 00.977.419/0001-06</li>
+                            </ul>
+                        </div>
+                        <p class="mt-4 text-sm text-indigo-700 bg-indigo-100 p-3 rounded-lg"><strong>Beneficiário:</strong> Instituto de Estudos, Pesquisas e Projetos da UECE (IEPRO).</p>
                     </div>
                 </div>
-
-                 <div class="mt-12">
-                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Documentação Necessária (em PDF)</h3>
-                    <ul class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-gray-600">
-                        <li class="flex items-center"><span class="text-blue-500 mr-2">✓</span>RG e CPF</li>
-                        <li class="flex items-center"><span class="text-blue-500 mr-2">✓</span>Comprovante de residência</li>
-                        <li class="flex items-center"><span class="text-blue-500 mr-2">✓</span>Título de Eleitor e comprovante de votação</li>
-                        <li class="flex items-center"><span class="text-blue-500 mr-2">✓</span>Quitação com serviço militar (homens)</li>
-                        <li class="flex items-center"><span class="text-blue-500 mr-2">✓</span>Diploma ou Declaração de Conclusão</li>
-                        <li class="flex items-center"><span class="text-blue-500 mr-2">✓</span>Declaração para formandos</li>
+                <div class="bg-white p-8 rounded-xl shadow-lg">
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Documentação (em PDF)</h3>
+                    <ul class="space-y-3 text-slate-600">
+                        <li class="flex items-center"><span class="text-green-500 mr-3 text-xl">✓</span>RG e CPF</li>
+                        <li class="flex items-center"><span class="text-green-500 mr-3 text-xl">✓</span>Comprovante de residência</li>
+                        <li class="flex items-center"><span class="text-green-500 mr-3 text-xl">✓</span>Título de Eleitor e comprovante de votação</li>
+                        <li class="flex items-center"><span class="text-green-500 mr-3 text-xl">✓</span>Quitação com serviço militar (homens)</li>
+                        <li class="flex items-center"><span class="text-green-500 mr-3 text-xl">✓</span>Diploma ou Declaração de Conclusão</li>
+                        <li class="flex items-center"><span class="text-green-500 mr-3 text-xl">✓</span>Declaração para formandos</li>
                     </ul>
                 </div>
             </div>
@@ -176,21 +190,36 @@
 
         <section id="polos" class="py-16">
             <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold text-gray-800">Polos de Apoio Presencial</h2>
-                <p class="text-gray-600 mt-2">Encontre as informações de contato do polo mais próximo.</p>
+                <h2 class="text-4xl font-bold text-slate-800">Polos de Apoio Presencial</h2>
+                <p class="text-slate-500 mt-2 text-lg">Encontre o seu polo de apoio.</p>
             </div>
-             <div class="bg-white p-6 rounded-lg shadow-md mb-8 max-w-lg mx-auto">
-                <label for="filtro-polo-contato" class="block text-sm font-medium text-gray-700 mb-1">Pesquisar polo por cidade</label>
-                <input type="text" id="filtro-polo-contato" placeholder="Ex: Fortaleza" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+             <div class="bg-white p-6 rounded-xl shadow-md mb-8 max-w-lg mx-auto">
+                <label for="filtro-polo-contato" class="block text-sm font-medium text-slate-700 mb-1">Pesquisar polo por cidade</label>
+                <input type="text" id="filtro-polo-contato" placeholder="Ex: Fortaleza" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition">
             </div>
             <div id="lista-polos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             </div>
              <div class="text-center mt-12" id="nenhum-polo" style="display: none;">
-                <p class="text-gray-500 text-lg">Nenhum polo encontrado com o nome pesquisado.</p>
+                <p class="text-slate-500 text-lg">Nenhum polo encontrado com o nome pesquisado.</p>
             </div>
         </section>
         
     </main>
+
+    <!-- Modal Structure -->
+    <div id="polos-modal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center p-4 z-50 modal-backdrop">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl transform opacity-0 -translate-y-10 modal-content" id="modal-content-area">
+            <div class="p-6 border-b border-slate-200 flex justify-between items-center">
+                <h3 class="text-2xl font-bold text-slate-800" id="modal-title"></h3>
+                <button id="modal-close-btn" class="text-slate-500 hover:text-slate-800 transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="p-6 max-h-[60vh] overflow-y-auto" id="modal-body">
+            </div>
+        </div>
+    </div>
+
 
     <script>
         const cursosData = [
@@ -360,7 +389,7 @@
         ];
 
         document.addEventListener('DOMContentLoaded', () => {
-            const listaCursosEl = document.getElementById('lista-cursos');
+            const gridCursosEl = document.getElementById('cursos-card-grid');
             const filtroCursoEl = document.getElementById('filtro-curso');
             const filtroPoloEl = document.getElementById('filtro-polo');
             const nenhumCursoEl = document.getElementById('nenhum-curso');
@@ -371,6 +400,28 @@
 
             const timelineContainerEl = document.getElementById('timeline-container');
             
+            const modalEl = document.getElementById('polos-modal');
+            const modalContentEl = document.getElementById('modal-content-area');
+            const modalTitleEl = document.getElementById('modal-title');
+            const modalBodyEl = document.getElementById('modal-body');
+            const modalCloseBtn = document.getElementById('modal-close-btn');
+
+            function agruparCursos() {
+                const cursosAgrupados = cursosData.reduce((acc, item) => {
+                    let curso = acc.find(c => c.curso === item.curso);
+                    if (!curso) {
+                        curso = { curso: item.curso, polos: [], totalVagas: 0 };
+                        acc.push(curso);
+                    }
+                    curso.polos.push({ polo: item.polo, vagas: item.vagas });
+                    curso.totalVagas += item.vagas;
+                    return acc;
+                }, []);
+                return cursosAgrupados.sort((a, b) => a.curso.localeCompare(b.curso));
+            }
+            
+            const dadosAgrupados = agruparCursos();
+
             function popularFiltroPolos() {
                 const polos = [...new Set(cursosData.map(c => c.polo))].sort();
                 polos.forEach(polo => {
@@ -381,36 +432,103 @@
                 });
             }
 
-            function renderizarCursos() {
+            function renderizarCursosCards() {
                 const termoCurso = filtroCursoEl.value.toLowerCase();
                 const poloSelecionado = filtroPoloEl.value;
 
-                const cursosFiltrados = cursosData.filter(c => {
-                    const matchCurso = c.curso.toLowerCase().includes(termoCurso);
-                    const matchPolo = poloSelecionado ? c.polo === poloSelecionado : true;
+                const cursosFiltrados = dadosAgrupados.filter(grupo => {
+                    const matchCurso = grupo.curso.toLowerCase().includes(termoCurso);
+                    const matchPolo = poloSelecionado ? grupo.polos.some(p => p.polo === poloSelecionado) : true;
                     return matchCurso && matchPolo;
                 });
                 
-                listaCursosEl.innerHTML = '';
+                gridCursosEl.innerHTML = '';
+
                 if (cursosFiltrados.length === 0) {
                     nenhumCursoEl.style.display = 'block';
                 } else {
-                     nenhumCursoEl.style.display = 'none';
+                    nenhumCursoEl.style.display = 'none';
                 }
 
-                cursosFiltrados.forEach(c => {
-                    const card = `
-                        <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-500 hover:shadow-xl transition-shadow">
-                            <h3 class="font-bold text-lg text-gray-800">${c.curso}</h3>
-                            <p class="text-gray-600 mt-2">${c.polo}</p>
-                            <div class="mt-4 bg-blue-100 text-blue-800 font-bold text-sm inline-block px-3 py-1 rounded-full">
-                                ${c.vagas} vagas
-                            </div>
+                cursosFiltrados.forEach((grupo) => {
+                    const card = document.createElement('div');
+                    card.className = 'course-card bg-white rounded-xl shadow-lg overflow-hidden flex flex-col';
+                    card.innerHTML = `
+                        <div class="p-6 flex-grow">
+                            <div class="text-3xl mb-3">${getIconForCourse(grupo.curso)}</div>
+                            <h3 class="font-bold text-xl text-slate-800 mb-2">${grupo.curso}</h3>
+                            <p class="text-slate-500 text-sm">Disponível em ${grupo.polos.length} polos.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4">
+                            <button data-course-name="${grupo.curso}" class="open-modal-btn w-full text-center font-semibold text-indigo-600 hover:text-indigo-800 transition">Ver Polos</button>
                         </div>
                     `;
-                    listaCursosEl.innerHTML += card;
+                    gridCursosEl.appendChild(card);
                 });
             }
+            
+            function getIconForCourse(courseName) {
+                if (courseName.toLowerCase().includes('gestão') || courseName.toLowerCase().includes('auditoria') || courseName.toLowerCase().includes('contabilidade')) return '📊';
+                if (courseName.toLowerCase().includes('educação') || courseName.toLowerCase().includes('alfabetização') || courseName.toLowerCase().includes('letras')) return '📚';
+                if (courseName.toLowerCase().includes('tecnologia') || courseName.toLowerCase().includes('ciência') || courseName.toLowerCase().includes('matemática')) return '🔬';
+                if (courseName.toLowerCase().includes('saúde')) return '❤️';
+                if (courseName.toLowerCase().includes('turismo') || courseName.toLowerCase().includes('governança') || courseName.toLowerCase().includes('sustentabilidade')) return '🌍';
+                return '🎓';
+            }
+
+            function abrirModal(courseName) {
+                const curso = dadosAgrupados.find(c => c.curso === courseName);
+                if (!curso) return;
+
+                modalTitleEl.textContent = curso.curso;
+                modalBodyEl.innerHTML = '';
+                
+                const list = document.createElement('div');
+                list.className = 'space-y-2';
+                
+                curso.polos.forEach(p => {
+                    list.innerHTML += `
+                        <div class="flex justify-between items-center py-3 px-4 hover:bg-slate-100 rounded-lg">
+                            <span class="text-slate-700">${p.polo}</span>
+                            <span class="bg-indigo-100 text-indigo-800 font-bold text-sm px-3 py-1 rounded-full">${p.vagas} vagas</span>
+                        </div>
+                    `;
+                });
+
+                modalBodyEl.appendChild(list);
+                
+                modalEl.classList.remove('hidden');
+                modalEl.classList.add('flex');
+                setTimeout(() => {
+                    modalEl.classList.remove('opacity-0');
+                    modalContentEl.classList.remove('opacity-0', '-translate-y-10');
+                }, 10);
+            }
+
+            function fecharModal() {
+                 modalEl.classList.add('opacity-0');
+                 modalContentEl.classList.add('opacity-0', '-translate-y-10');
+                 setTimeout(() => {
+                    modalEl.classList.add('hidden');
+                    modalEl.classList.remove('flex');
+                 }, 300);
+            }
+
+            gridCursosEl.addEventListener('click', (e) => {
+                const button = e.target.closest('.open-modal-btn');
+                if (button) {
+                    const courseName = button.dataset.courseName;
+                    abrirModal(courseName);
+                }
+            });
+
+            modalCloseBtn.addEventListener('click', fecharModal);
+            modalEl.addEventListener('click', (e) => {
+                if(e.target === modalEl) {
+                    fecharModal();
+                }
+            });
+
 
             function renderizarPolos() {
                 const termoPolo = filtroPoloContatoEl.value.toLowerCase();
@@ -425,13 +543,12 @@
 
                 polosFiltrados.forEach(p => {
                     const card = `
-                        <div class="bg-white p-6 rounded-lg shadow-md">
-                            <h3 class="font-bold text-lg text-gray-800">${p.cidade}</h3>
-                            <p class="text-gray-600 mt-2">${p.endereco}</p>
-                            <div class="mt-4 text-sm space-y-1">
-                                <p><span class="font-semibold">Responsável:</span> ${p.responsavel}</p>
-                                <p><span class="font-semibold">Fone:</span> ${p.fone}</p>
-                                <p><span class="font-semibold">Email:</span> ${p.email}</p>
+                        <div class="bg-white p-6 rounded-xl shadow-lg h-full flex flex-col">
+                            <h3 class="font-bold text-xl text-slate-800 mb-3">${p.cidade}</h3>
+                            <p class="text-slate-500 text-sm mb-4 flex-grow">${p.endereco}</p>
+                            <div class="border-t border-slate-200 pt-4 text-sm space-y-2">
+                                <p class="text-slate-600"><span class="font-semibold">📞 Fone:</span> ${p.fone}</p>
+                                <p class="text-slate-600"><span class="font-semibold">📧 Email:</span> ${p.email}</p>
                             </div>
                         </div>
                     `;
@@ -447,30 +564,30 @@
                 cronogramaData.forEach(evento => {
                     const dataEvento = new Date(evento.data + 'T03:00:00Z');
                     const itemDiv = document.createElement('div');
-                    itemDiv.className = 'mb-8 relative timeline-item';
+                    itemDiv.className = 'mb-10 relative timeline-item';
                     
                     if (!proximoEventoMarcado && dataEvento >= hoje) {
                         itemDiv.classList.add('highlight');
                         proximoEventoMarcado = true;
                     }
                     
-                    const dataFormatada = dataEvento.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                    const dataFormatada = dataEvento.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' });
                     
                     itemDiv.innerHTML = `
-                        <p class="font-bold text-blue-600">${dataFormatada}</p>
-                        <h4 class="text-lg font-semibold text-gray-700">${evento.evento}</h4>
+                        <p class="font-bold text-lg text-indigo-600">${dataFormatada}</p>
+                        <h4 class="text-lg font-semibold text-slate-700">${evento.evento}</h4>
                     `;
                     timelineContainerEl.appendChild(itemDiv);
                 });
             }
 
             popularFiltroPolos();
-            renderizarCursos();
+            renderizarCursosCards();
             renderizarPolos();
             renderizarCronograma();
 
-            filtroCursoEl.addEventListener('keyup', renderizarCursos);
-            filtroPoloEl.addEventListener('change', renderizarCursos);
+            filtroCursoEl.addEventListener('keyup', renderizarCursosCards);
+            filtroPoloEl.addEventListener('change', renderizarCursosCards);
             filtroPoloContatoEl.addEventListener('keyup', renderizarPolos);
         });
     </script>
