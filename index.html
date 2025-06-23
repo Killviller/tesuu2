@@ -10,13 +10,20 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --govce-green: #008744;
+            --govce-dark-text: #2c3e50;
+            --govce-body-text: #34495e;
+            --govce-light-bg: #f8f9fa;
+            --govce-border-color: #dee2e6;
+        }
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f7f8fc;
-            color: #334155;
+            background-color: var(--govce-light-bg);
+            color: var(--govce-body-text);
         }
-        .hero-gradient {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .govce-hero {
+            background-color: var(--govce-green);
         }
         .timeline-item::before {
             content: '';
@@ -27,11 +34,11 @@
             height: 26px;
             border-radius: 50%;
             background-color: #cbd5e1;
-            border: 4px solid #f7f8fc;
+            border: 4px solid var(--govce-light-bg);
             z-index: 1;
         }
         .timeline-item.highlight::before {
-            background-color: #3b82f6;
+            background-color: var(--govce-green);
             animation: pulse 2s infinite;
         }
         .timeline-path::before {
@@ -41,14 +48,14 @@
             top: 5px;
             bottom: 5px;
             width: 3px;
-            background-color: #e2e8f0;
+            background-color: var(--govce-border-color);
         }
         .process-card {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         .process-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
         }
         .course-card {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -64,9 +71,9 @@
             transition: transform 0.3s ease, opacity 0.3s ease;
         }
         @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(0, 135, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 135, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 135, 68, 0); }
         }
     </style>
 </head>
@@ -74,14 +81,14 @@
 
     <main class="container mx-auto px-4 md:px-6">
 
-        <section id="hero" class="hero-gradient text-white text-center py-20 md:py-28 rounded-3xl my-12">
+        <section id="hero" class="govce-hero text-white text-center py-20 md:py-28 rounded-3xl my-12">
             <h1 class="text-4xl md:text-6xl font-extrabold mb-4 drop-shadow-md">Pós-Graduação a Distância UECE/UAB</h1>
-            <p class="text-lg md:text-xl max-w-3xl mx-auto opacity-90">Chamada Pública Nº 55/2025: Uma nova forma de explorar o seu futuro.</p>
+            <p class="text-lg md:text-xl max-w-3xl mx-auto opacity-90">Chamada Pública Nº 55/2025: Explore o seu futuro com a chancela do Governo do Estado do Ceará.</p>
         </section>
 
         <section id="cursos" class="py-16">
             <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold text-slate-800">Cursos e Vagas</h2>
+                <h2 class="text-4xl font-bold" style="color: var(--govce-dark-text);">Cursos e Vagas</h2>
                 <p class="text-slate-500 mt-2 text-lg">Filtre e clique em um curso para ver os polos disponíveis.</p>
             </div>
 
@@ -89,11 +96,11 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label for="filtro-curso" class="block text-sm font-medium text-slate-700 mb-1">Filtrar por nome do curso</label>
-                        <input type="text" id="filtro-curso" placeholder="Ex: Gestão em Saúde" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition">
+                        <input type="text" id="filtro-curso" placeholder="Ex: Gestão em Saúde" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-green-500 focus:border-green-500 transition">
                     </div>
                     <div>
                         <label for="filtro-polo" class="block text-sm font-medium text-slate-700 mb-1">Filtrar por polo (cidade)</label>
-                        <select id="filtro-polo" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition">
+                        <select id="filtro-polo" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-green-500 focus:border-green-500 transition">
                             <option value="">Todos os Polos</option>
                         </select>
                     </div>
@@ -110,26 +117,26 @@
 
         <section id="processo" class="py-16">
             <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold text-slate-800">Etapas do Processo Seletivo</h2>
+                <h2 class="text-4xl font-bold" style="color: var(--govce-dark-text);">Etapas do Processo Seletivo</h2>
                 <p class="text-slate-500 mt-2 text-lg">Um guia visual sobre as fases da seleção.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
-                <div class="process-card text-center p-8 bg-white rounded-xl shadow-lg border-b-4 border-indigo-500">
+                <div class="process-card text-center p-8 bg-white rounded-xl shadow-lg border-b-4" style="border-color: var(--govce-green);">
                     <div class="text-5xl mb-4">📄</div>
-                    <h3 class="text-2xl font-bold text-slate-800 mb-2">1. Documentação</h3>
+                    <h3 class="text-2xl font-bold" style="color: var(--govce-dark-text);" mb-2">1. Documentação</h3>
                     <p class="text-slate-600">Fase eliminatória. Envie corretamente todos os documentos solicitados no ato da inscrição para ter sua candidatura validada.</p>
                 </div>
 
-                <div class="process-card text-center p-8 bg-white rounded-xl shadow-lg border-b-4 border-indigo-500">
+                <div class="process-card text-center p-8 bg-white rounded-xl shadow-lg border-b-4" style="border-color: var(--govce-green);">
                     <div class="text-5xl mb-4">💻</div>
-                    <h3 class="text-2xl font-bold text-slate-800 mb-2">2. Prova Online</h3>
+                    <h3 class="text-2xl font-bold" style="color: var(--govce-dark-text);" mb-2">2. Prova Online</h3>
                     <p class="text-slate-600">Fase eliminatória e classificatória. Teste os seus conhecimentos com uma prova online de 20 questões de múltipla escolha.</p>
                 </div>
 
-                <div class="process-card text-center p-8 bg-white rounded-xl shadow-lg border-b-4 border-indigo-500">
+                <div class="process-card text-center p-8 bg-white rounded-xl shadow-lg border-b-4" style="border-color: var(--govce-green);">
                     <div class="text-5xl mb-4">🏆</div>
-                    <h3 class="text-2xl font-bold text-slate-800 mb-2">3. Avaliação de Títulos</h3>
+                    <h3 class="text-2xl font-bold" style="color: var(--govce-dark-text);" mb-2">3. Avaliação de Títulos</h3>
                     <p class="text-slate-600">Fase classificatória. O seu currículo e experiência profissional contam pontos e ajudam a definir a sua posição final.</p>
                 </div>
             </div>
@@ -137,7 +144,7 @@
         
         <section id="cronograma" class="py-16">
             <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold text-slate-800">Cronograma de Eventos</h2>
+                <h2 class="text-4xl font-bold" style="color: var(--govce-dark-text);">Cronograma de Eventos</h2>
                 <p class="text-slate-500 mt-2 text-lg">Acompanhe as datas mais importantes. O próximo evento está em destaque.</p>
             </div>
             <div class="max-w-3xl mx-auto bg-white p-8 md:p-12 rounded-xl shadow-lg">
@@ -148,12 +155,12 @@
 
         <section id="inscricao" class="py-16">
             <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold text-slate-800">Guia de Inscrição</h2>
+                <h2 class="text-4xl font-bold" style="color: var(--govce-dark-text);">Guia de Inscrição</h2>
                 <p class="text-slate-500 mt-2 text-lg">Tudo o que precisa para uma inscrição tranquila.</p>
             </div>
             <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div class="bg-white p-8 rounded-xl shadow-lg">
-                    <h3 class="text-2xl font-bold text-slate-800 mb-6 border-b pb-4">Pagamento da Taxa: R$ 100,00</h3>
+                    <h3 class="text-2xl font-bold mb-6 border-b pb-4" style="color: var(--govce-dark-text);">Pagamento da Taxa: R$ 100,00</h3>
                     <div class="space-y-6">
                         <div>
                             <h4 class="text-xl font-semibold text-slate-700 mb-3">Opção 1: Depósito Bancário</h4>
@@ -171,18 +178,18 @@
                                 <li><span class="font-semibold">CNPJ:</span> 00.977.419/0001-06</li>
                             </ul>
                         </div>
-                        <p class="mt-4 text-sm text-indigo-700 bg-indigo-100 p-3 rounded-lg"><strong>Beneficiário:</strong> Instituto de Estudos, Pesquisas e Projetos da UECE (IEPRO).</p>
+                        <p class="mt-4 text-sm p-3 rounded-lg" style="color: #00562f; background-color: #e6f4eb;"><strong>Beneficiário:</strong> Instituto de Estudos, Pesquisas e Projetos da UECE (IEPRO).</p>
                     </div>
                 </div>
                 <div class="bg-white p-8 rounded-xl shadow-lg">
-                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Documentação (em PDF)</h3>
+                    <h3 class="text-2xl font-bold mb-4" style="color: var(--govce-dark-text);">Documentação (em PDF)</h3>
                     <ul class="space-y-3 text-slate-600">
-                        <li class="flex items-center"><span class="text-green-500 mr-3 text-xl">✓</span>RG e CPF</li>
-                        <li class="flex items-center"><span class="text-green-500 mr-3 text-xl">✓</span>Comprovante de residência</li>
-                        <li class="flex items-center"><span class="text-green-500 mr-3 text-xl">✓</span>Título de Eleitor e comprovante de votação</li>
-                        <li class="flex items-center"><span class="text-green-500 mr-3 text-xl">✓</span>Quitação com serviço militar (homens)</li>
-                        <li class="flex items-center"><span class="text-green-500 mr-3 text-xl">✓</span>Diploma ou Declaração de Conclusão</li>
-                        <li class="flex items-center"><span class="text-green-500 mr-3 text-xl">✓</span>Declaração para formandos</li>
+                        <li class="flex items-center"><span class="mr-3 text-xl" style="color: var(--govce-green);">✓</span>RG e CPF</li>
+                        <li class="flex items-center"><span class="mr-3 text-xl" style="color: var(--govce-green);">✓</span>Comprovante de residência</li>
+                        <li class="flex items-center"><span class="mr-3 text-xl" style="color: var(--govce-green);">✓</span>Título de Eleitor e comprovante de votação</li>
+                        <li class="flex items-center"><span class="mr-3 text-xl" style="color: var(--govce-green);">✓</span>Quitação com serviço militar (homens)</li>
+                        <li class="flex items-center"><span class="mr-3 text-xl" style="color: var(--govce-green);">✓</span>Diploma ou Declaração de Conclusão</li>
+                        <li class="flex items-center"><span class="mr-3 text-xl" style="color: var(--govce-green);">✓</span>Declaração para formandos</li>
                     </ul>
                 </div>
             </div>
@@ -190,12 +197,12 @@
 
         <section id="polos" class="py-16">
             <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold text-slate-800">Polos de Apoio Presencial</h2>
+                <h2 class="text-4xl font-bold" style="color: var(--govce-dark-text);">Polos de Apoio Presencial</h2>
                 <p class="text-slate-500 mt-2 text-lg">Encontre o seu polo de apoio.</p>
             </div>
              <div class="bg-white p-6 rounded-xl shadow-md mb-8 max-w-lg mx-auto">
                 <label for="filtro-polo-contato" class="block text-sm font-medium text-slate-700 mb-1">Pesquisar polo por cidade</label>
-                <input type="text" id="filtro-polo-contato" placeholder="Ex: Fortaleza" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition">
+                <input type="text" id="filtro-polo-contato" placeholder="Ex: Fortaleza" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-green-500 focus:border-green-500 transition">
             </div>
             <div id="lista-polos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             </div>
@@ -210,7 +217,7 @@
     <div id="polos-modal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center p-4 z-50 modal-backdrop">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl transform opacity-0 -translate-y-10 modal-content" id="modal-content-area">
             <div class="p-6 border-b border-slate-200 flex justify-between items-center">
-                <h3 class="text-2xl font-bold text-slate-800" id="modal-title"></h3>
+                <h3 class="text-2xl font-bold" style="color: var(--govce-dark-text);" id="modal-title"></h3>
                 <button id="modal-close-btn" class="text-slate-500 hover:text-slate-800 transition">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
@@ -456,11 +463,11 @@
                     card.innerHTML = `
                         <div class="p-6 flex-grow">
                             <div class="text-3xl mb-3">${getIconForCourse(grupo.curso)}</div>
-                            <h3 class="font-bold text-xl text-slate-800 mb-2">${grupo.curso}</h3>
+                            <h3 class="font-bold text-xl mb-2" style="color: var(--govce-dark-text);">${grupo.curso}</h3>
                             <p class="text-slate-500 text-sm">Disponível em ${grupo.polos.length} polos.</p>
                         </div>
                         <div class="bg-slate-50 p-4">
-                            <button data-course-name="${grupo.curso}" class="open-modal-btn w-full text-center font-semibold text-indigo-600 hover:text-indigo-800 transition">Ver Polos</button>
+                            <button data-course-name="${grupo.curso}" class="open-modal-btn w-full text-center font-semibold transition" style="color: var(--govce-green);">Ver Polos</button>
                         </div>
                     `;
                     gridCursosEl.appendChild(card);
@@ -470,7 +477,7 @@
             function getIconForCourse(courseName) {
                 if (courseName.toLowerCase().includes('gestão') || courseName.toLowerCase().includes('auditoria') || courseName.toLowerCase().includes('contabilidade')) return '📊';
                 if (courseName.toLowerCase().includes('educação') || courseName.toLowerCase().includes('alfabetização') || courseName.toLowerCase().includes('letras')) return '📚';
-                if (courseName.toLowerCase().includes('tecnologia') || courseName.toLowerCase().includes('ciência') || courseName.toLowerCase().includes('matemática')) return '🔬';
+                if (courseName.toLowerCase().includes('tecnologia') || courseName.toLowerCase().includes('ciência') || courseName.toLowerCase().includes('matemática')) return '�';
                 if (courseName.toLowerCase().includes('saúde')) return '❤️';
                 if (courseName.toLowerCase().includes('turismo') || courseName.toLowerCase().includes('governança') || courseName.toLowerCase().includes('sustentabilidade')) return '🌍';
                 return '🎓';
@@ -490,7 +497,7 @@
                     list.innerHTML += `
                         <div class="flex justify-between items-center py-3 px-4 hover:bg-slate-100 rounded-lg">
                             <span class="text-slate-700">${p.polo}</span>
-                            <span class="bg-indigo-100 text-indigo-800 font-bold text-sm px-3 py-1 rounded-full">${p.vagas} vagas</span>
+                            <span class="font-bold text-sm px-3 py-1 rounded-full" style="color: #00562f; background-color: #e6f4eb;">${p.vagas} vagas</span>
                         </div>
                     `;
                 });
@@ -544,7 +551,7 @@
                 polosFiltrados.forEach(p => {
                     const card = `
                         <div class="bg-white p-6 rounded-xl shadow-lg h-full flex flex-col">
-                            <h3 class="font-bold text-xl text-slate-800 mb-3">${p.cidade}</h3>
+                            <h3 class="font-bold text-xl mb-3" style="color: var(--govce-dark-text);">${p.cidade}</h3>
                             <p class="text-slate-500 text-sm mb-4 flex-grow">${p.endereco}</p>
                             <div class="border-t border-slate-200 pt-4 text-sm space-y-2">
                                 <p class="text-slate-600"><span class="font-semibold">📞 Fone:</span> ${p.fone}</p>
@@ -574,7 +581,7 @@
                     const dataFormatada = dataEvento.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' });
                     
                     itemDiv.innerHTML = `
-                        <p class="font-bold text-lg text-indigo-600">${dataFormatada}</p>
+                        <p class="font-bold text-lg" style="color: var(--govce-green);">${dataFormatada}</p>
                         <h4 class="text-lg font-semibold text-slate-700">${evento.evento}</h4>
                     `;
                     timelineContainerEl.appendChild(itemDiv);
@@ -593,3 +600,4 @@
     </script>
 </body>
 </html>
+�
