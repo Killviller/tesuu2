@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processo Seletivo de Especialização UECE/UAB</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Academia -->
+    <!-- Application Structure Plan: A single-page application with a sticky top navigation bar for quick access to key sections. The structure is task-oriented, designed to answer user questions sequentially: What courses are available? (Interactive Dashboard), What is the process? (Visual Stepper), What are the deadlines? (Interactive Timeline), How do I pay? (Clear Guide), and Where is my local support center? (Searchable List). This non-linear, user-centric structure is superior to the original PDF's linear format, allowing candidates to find relevant information instantly without navigating dense text. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Full list of courses/vacancies -> Goal: Organize/Explore -> Viz/Method: Interactive Card Grid with Filters -> Interaction: Dropdown/text input filters for course and polo -> Justification: The original table is too long. Filtering allows users to quickly find relevant opportunities. -> Library/Method: Vanilla JS, Tailwind CSS.
+        - Report Info: Total vacancies per course -> Goal: Compare -> Viz/Method: Bar Chart -> Interaction: Hover for details -> Justification: Provides a quick overview of the most popular programs, aiding decision-making. -> Library/Method: Chart.js (Canvas).
+        - Report Info: Multi-step selection process -> Goal: Organize -> Viz/Method: HTML/CSS Stepper -> Interaction: Static -> Justification: A visual stepper is more intuitive for understanding a multi-stage process than a text block. -> Library/Method: HTML/Tailwind.
+        - Report Info: Full timeline of events -> Goal: Change/Inform -> Viz/Method: Vertical Timeline with Dynamic Highlighting -> Interaction: JS highlights the next upcoming event -> Justification: Immediately answers "what's next?" for the user. -> Library/Method: Vanilla JS, Tailwind CSS.
+        - Report Info: Payment/Polo information -> Goal: Inform/Explore -> Viz/Method: Comparison boxes and a searchable list -> Interaction: Static and Search Input -> Justification: Prevents user error in payment and provides faster access to contact info than a static list. -> Library/Method: HTML/Tailwind, Vanilla JS. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F7F4;
+            color: #4A4A4A;
+        }
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+            max-height: 50vh;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 5px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #D1D5DB;
+            border: 3px solid #F8F7F4;
+        }
+        .timeline-item.highlight::before {
+            background-color: #3B82F6;
+        }
+        .timeline-path::before {
+            content: '';
+            position: absolute;
+            left: -21px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: #E5E7EB;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="sticky-nav bg-white/80 shadow-sm">
+        <nav class="container mx-auto px-6 py-3">
+            <div class="flex justify-between items-center">
+                <div class="text-xl font-bold text-gray-800">UECE/UAB</div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#cursos" class="text-gray-600 hover:text-blue-500">Cursos</a>
+                    <a href="#processo" class="text-gray-600 hover:text-blue-500">Processo Seletivo</a>
+                    <a href="#cronograma" class="text-gray-600 hover:text-blue-500">Cronograma</a>
+                    <a href="#inscricao" class="text-gray-600 hover:text-blue-500">Inscrição</a>
+                    <a href="#polos" class="text-gray-600 hover:text-blue-500">Polos</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <section id="hero" class="text-center py-16">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Pós-Graduação a Distância UECE/UAB</h1>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-8">Chamada Pública Nº 55/2025: Explore os cursos de especialização, entenda o processo seletivo e prepare-se para sua inscrição.</p>
+            <a href="#cursos" class="bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 transition-colors">Ver Cursos Disponíveis</a>
+        </section>
+
+        <section id="cursos" class="py-16">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800">Cursos e Vagas</h2>
+                <p class="text-gray-600 mt-2">Filtre por curso ou polo para encontrar a oportunidade ideal para você.</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="filtro-curso" class="block text-sm font-medium text-gray-700 mb-1">Filtrar por nome do curso</label>
+                        <input type="text" id="filtro-curso" placeholder="Ex: Gestão em Saúde" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label for="filtro-polo" class="block text-sm font-medium text-gray-700 mb-1">Filtrar por polo (cidade)</label>
+                        <select id="filtro-polo" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Todos os Polos</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div id="lista-cursos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            </div>
+            
+            <div class="text-center mt-12" id="nenhum-curso" style="display: none;">
+                <p class="text-gray-500 text-lg">Nenhum curso encontrado com os filtros aplicados.</p>
+            </div>
+
+            <div class="mt-16">
+                 <div class="text-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">Distribuição de Vagas</h3>
+                    <p class="text-gray-600 mt-1">Cursos com maior número de vagas totais nesta chamada.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="chart-container">
+                        <canvas id="vagasChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="processo" class="py-16 bg-blue-50/50 rounded-lg">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800">Etapas do Processo Seletivo</h2>
+                <p class="text-gray-600 mt-2">Entenda as fases da seleção, desde a inscrição até o resultado final.</p>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-center items-start gap-8 px-4">
+                <div class="flex-1 text-center p-6 bg-white rounded-lg shadow-md border-t-4 border-blue-500">
+                    <div class="text-3xl font-bold text-blue-600 mb-2">1ª Etapa</div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Análise de Documentação</h3>
+                    <p class="text-gray-600">Fase eliminatória. A comissão verificará se todos os documentos obrigatórios foram enviados corretamente no ato da inscrição. Inscrições com pendências serão indeferidas.</p>
+                </div>
+
+                <div class="flex-1 text-center p-6 bg-white rounded-lg shadow-md border-t-4 border-blue-500">
+                     <div class="text-3xl font-bold text-blue-600 mb-2">2ª Etapa</div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Prova de Conhecimentos Online</h3>
+                    <p class="text-gray-600">Fase eliminatória e classificatória. Consiste em uma prova online com 20 questões de múltipla escolha, baseadas no Projeto Pedagógico do curso escolhido.</p>
+                </div>
+
+                <div class="flex-1 text-center p-6 bg-white rounded-lg shadow-md border-t-4 border-blue-500">
+                     <div class="text-3xl font-bold text-blue-600 mb-2">3ª Etapa</div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Avaliação de Títulos</h3>
+                    <p class="text-gray-600">Fase classificatória. Análise do currículo do candidato, pontuando formação acadêmica (especialização, mestrado, doutorado) e experiência profissional relevante.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="cronograma" class="py-16">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800">Cronograma de Eventos</h2>
+                <p class="text-gray-600 mt-2">Datas importantes do processo seletivo. O evento em destaque é o próximo passo.</p>
+            </div>
+            <div class="max-w-3xl mx-auto">
+                <div id="timeline-container" class="relative pl-8 timeline-path">
+                </div>
+            </div>
+        </section>
+
+        <section id="inscricao" class="py-16">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800">Guia de Inscrição e Pagamento</h2>
+                <p class="text-gray-600 mt-2">Siga os passos para uma inscrição e pagamento bem-sucedidos.</p>
+            </div>
+            <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-4">Taxa de Inscrição: R$ 100,00</h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="text-xl font-semibold text-gray-700 mb-3">Opção 1: Depósito Bancário</h4>
+                        <p class="mb-4 text-gray-600">Realize o pagamento diretamente em uma agência do Banco do Brasil.</p>
+                        <ul class="space-y-2 text-gray-700">
+                            <li><span class="font-semibold">Banco:</span> Banco do Brasil</li>
+                            <li><span class="font-semibold">Agência:</span> 008-6</li>
+                            <li><span class="font-semibold">Conta-Corrente:</span> 27.447-X</li>
+                            <li><span class="font-semibold">Beneficiário:</span> Instituto de Estudos, Pesquisas e Projetos da UECE (IEPRO/SATE)</li>
+                        </ul>
+                         <p class="mt-4 text-sm text-blue-700 bg-blue-100 p-3 rounded-lg">Importante: Guarde o comprovante de depósito original.</p>
+                    </div>
+                     <div>
+                        <h4 class="text-xl font-semibold text-gray-700 mb-3">Opção 2: Transferência (TED)</h4>
+                        <p class="mb-4 text-gray-600">Utilize o internet banking ou aplicativo do seu banco.</p>
+                        <ul class="space-y-2 text-gray-700">
+                             <li><span class="font-semibold">Banco:</span> 001 - Banco do Brasil</li>
+                            <li><span class="font-semibold">Agência:</span> 0008 (sem dígito)</li>
+                            <li><span class="font-semibold">Conta-Corrente:</span> 27.447-0 (com dígito)</li>
+                            <li><span class="font-semibold">CNPJ:</span> 00.977.419/0001-06</li>
+                             <li><span class="font-semibold">Beneficiário:</span> Instituto de Estudos, Pesquisas e Projetos da UECE (IEPRO)</li>
+                        </ul>
+                         <p class="mt-4 text-sm text-blue-700 bg-blue-100 p-3 rounded-lg">Importante: Salve o comprovante digital da transação.</p>
+                    </div>
+                </div>
+
+                 <div class="mt-12">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Documentação Necessária (em PDF)</h3>
+                    <ul class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-gray-600">
+                        <li class="flex items-center"><span class="text-blue-500 mr-2">✓</span>RG e CPF</li>
+                        <li class="flex items-center"><span class="text-blue-500 mr-2">✓</span>Comprovante de residência</li>
+                        <li class="flex items-center"><span class="text-blue-500 mr-2">✓</span>Título de Eleitor e comprovante de votação</li>
+                        <li class="flex items-center"><span class="text-blue-500 mr-2">✓</span>Quitação com serviço militar (homens)</li>
+                        <li class="flex items-center"><span class="text-blue-500 mr-2">✓</span>Diploma ou Declaração de Conclusão</li>
+                        <li class="flex items-center"><span class="text-blue-500 mr-2">✓</span>Declaração para formandos</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="polos" class="py-16">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800">Polos de Apoio Presencial</h2>
+                <p class="text-gray-600 mt-2">Encontre as informações de contato do polo mais próximo.</p>
+            </div>
+             <div class="bg-white p-6 rounded-lg shadow-md mb-8 max-w-lg mx-auto">
+                <label for="filtro-polo-contato" class="block text-sm font-medium text-gray-700 mb-1">Pesquisar polo por cidade</label>
+                <input type="text" id="filtro-polo-contato" placeholder="Ex: Fortaleza" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div id="lista-polos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            </div>
+             <div class="text-center mt-12" id="nenhum-polo" style="display: none;">
+                <p class="text-gray-500 text-lg">Nenhum polo encontrado com o nome pesquisado.</p>
+            </div>
+        </section>
+        
+    </main>
+
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-6 text-center">
+            <p>Esta é uma aplicação não oficial, criada para facilitar a visualização das informações da Chamada Pública N° 55/2025.</p>
+            <p class="mt-2 text-sm text-gray-400">Todas as informações devem ser confirmadas no site oficial: <a href="http://www.uece.br/sate" class="underline hover:text-blue-300">www.uece.br/sate</a>.</p>
+        </div>
+    </footer>
+
+    <script>
+        const cursosData = [
+            { curso: "Alfabetização e Multiletramentos", polo: "Aquiraz", vagas: 30 },
+            { curso: "Alfabetização e Multiletramentos", polo: "Baturité", vagas: 30 },
+            { curso: "Alfabetização e Multiletramentos", polo: "Beberibe", vagas: 30 },
+            { curso: "Alfabetização e Multiletramentos", polo: "Pacoti", vagas: 30 },
+            { curso: "Alfabetização e Multiletramentos", polo: "Parambu", vagas: 30 },
+            { curso: "Auditoria e Controle Interno", polo: "Aracati", vagas: 30 },
+            { curso: "Auditoria e Controle Interno", polo: "Crateús", vagas: 30 },
+            { curso: "Auditoria e Controle Interno", polo: "Jaguaribe", vagas: 30 },
+            { curso: "Auditoria e Controle Interno", polo: "Mombaça", vagas: 30 },
+            { curso: "Auditoria e Controle Interno", polo: "Trairi", vagas: 30 },
+            { curso: "Ciência é 10! - Projeto Nacional", polo: "Caucaia Itambé", vagas: 30 },
+            { curso: "Ciência é 10! - Projeto Nacional", polo: "Fortaleza", vagas: 30 },
+            { curso: "Ciência é 10! - Projeto Nacional", polo: "Parambu", vagas: 30 },
+            { curso: "Ciência é 10! - Projeto Nacional", polo: "Pedra Branca", vagas: 30 },
+            { curso: "Ciência é 10! - Projeto Nacional", polo: "Piquet Carneiro", vagas: 30 },
+            { curso: "Contabilidade Pública", polo: "Juazeiro do Norte", vagas: 30 },
+            { curso: "Contabilidade Pública", polo: "Maranguape", vagas: 30 },
+            { curso: "Contabilidade Pública", polo: "Orós", vagas: 30 },
+            { curso: "Contabilidade Pública", polo: "Pacoti", vagas: 30 },
+            { curso: "Contabilidade Pública", polo: "Piquet Carneiro", vagas: 30 },
+            { curso: "Controladoria Pública", polo: "Horizonte", vagas: 34 },
+            { curso: "Controladoria Pública", polo: "Maracanaú", vagas: 34 },
+            { curso: "Controladoria Pública", polo: "Meruoca", vagas: 34 },
+            { curso: "Controladoria Pública", polo: "Parambu", vagas: 34 },
+            { curso: "Controladoria Pública", polo: "Pedra Branca", vagas: 34 },
+            { curso: "Cultura Oceanica e Sustentabilidade", polo: "Amontada", vagas: 34 },
+            { curso: "Cultura Oceanica e Sustentabilidade", polo: "Aquiraz", vagas: 34 },
+            { curso: "Cultura Oceanica e Sustentabilidade", polo: "Beberibe", vagas: 34 },
+            { curso: "Cultura Oceanica e Sustentabilidade", polo: "Camocim", vagas: 34 },
+            { curso: "Cultura Oceanica e Sustentabilidade", polo: "Caucaia Novo Pabussu", vagas: 35 },
+            { curso: "Cultura Oceanica e Sustentabilidade", polo: "Fortaleza", vagas: 35 },
+            { curso: "Cultura Oceanica e Sustentabilidade", polo: "Itapipoca", vagas: 35 },
+            { curso: "Cultura Oceanica e Sustentabilidade", polo: "Itarema", vagas: 35 },
+            { curso: "Cultura Oceanica e Sustentabilidade", polo: "São Gonçalo do Amarante", vagas: 34 },
+            { curso: "Educação e diversidades", polo: "Amontada", vagas: 30 },
+            { curso: "Educação e diversidades", polo: "Canindé", vagas: 30 },
+            { curso: "Educação e diversidades", polo: "Caucaia - Novo Pabussu", vagas: 30 },
+            { curso: "Educação e diversidades", polo: "Maracanaú", vagas: 30 },
+            { curso: "Educação e diversidades", polo: "Russas", vagas: 30 },
+            { curso: "Educação Física e Esporte para pessoas com deficiência", polo: "Canindé", vagas: 30 },
+            { curso: "Educação Física e Esporte para pessoas com deficiência", polo: "Fortaleza", vagas: 30 },
+            { curso: "Educação Física e Esporte para pessoas com deficiência", polo: "Iguatu", vagas: 30 },
+            { curso: "Educação Física e Esporte para pessoas com deficiência", polo: "Maranguape", vagas: 30 },
+            { curso: "Educação Física e Esporte para pessoas com deficiência", polo: "Russas", vagas: 30 },
+            { curso: "Ensino de Matemática", polo: "Boa Viagem", vagas: 34 },
+            { curso: "Ensino de Matemática", polo: "Campos Sales", vagas: 34 },
+            { curso: "Ensino de Matemática", polo: "Limoeiro do Norte", vagas: 34 },
+            { curso: "Ensino de Matemática", polo: "Mauriti", vagas: 34 },
+            { curso: "Ensino de Matemática", polo: "Orós", vagas: 34 },
+            { curso: "Gestão em Saúde", polo: "Caucaia Novo Pabussu", vagas: 36 },
+            { curso: "Gestão em Saúde", polo: "Itapipoca", vagas: 36 },
+            { curso: "Gestão em Saúde", polo: "Lavras da Mangabeira", vagas: 36 },
+            { curso: "Gestão em Saúde", polo: "Quixemobim", vagas: 36 },
+            { curso: "Gestão em Saúde", polo: "Russas", vagas: 36 },
+            { curso: "Gestão Escolar - PNAP", polo: "Caucaia Araturi", vagas: 35 },
+            { curso: "Gestão Escolar - PNAP", polo: "Crateus", vagas: 34 },
+            { curso: "Gestão Escolar - PNAP", polo: "Itapipoca", vagas: 34 },
+            { curso: "Gestão Escolar - PNAP", polo: "Maranguape", vagas: 35 },
+            { curso: "Gestão Escolar - PNAP", polo: "Pacoti", vagas: 34 },
+            { curso: "Gestão Escolar - PNAP", polo: "Pedra Branca", vagas: 34 },
+            { curso: "Gestão Escolar - PNAP", polo: "Tabuleiro do Norte", vagas: 34 },
+            { curso: "Gestão Pública - PNAP", polo: "Itapipoca", vagas: 30 },
+            { curso: "Gestão Pública - PNAP", polo: "Mombaça", vagas: 30 },
+            { curso: "Gestão Pública - PNAP", polo: "Quixadá", vagas: 30 },
+            { curso: "Gestão Pública - PNAP", polo: "Russas", vagas: 30 },
+            { curso: "Gestão Pública - PNAP", polo: "Tabuleiro do Norte", vagas: 30 },
+            { curso: "Gestão Pública Municipal", polo: "Boa Viagem", vagas: 36 },
+            { curso: "Gestão Pública Municipal", polo: "Fortaleza", vagas: 36 },
+            { curso: "Gestão Pública Municipal", polo: "Granja", vagas: 36 },
+            { curso: "Gestão Pública Municipal", polo: "Juazeiro do Norte", vagas: 36 },
+            { curso: "Gestão Pública Municipal", polo: "São Gonçalo do Amarante", vagas: 36 },
+            { curso: "Governança Global, Desenvolvimento Sustentável e Comunidades Tradicionais", polo: "Amontada", vagas: 34 },
+            { curso: "Governança Global, Desenvolvimento Sustentável e Comunidades Tradicionais", polo: "Aquiraz", vagas: 35 },
+            { curso: "Governança Global, Desenvolvimento Sustentável e Comunidades Tradicionais", polo: "Aracati", vagas: 34 },
+            { curso: "Governança Global, Desenvolvimento Sustentável e Comunidades Tradicionais", polo: "Beberibe", vagas: 35 },
+            { curso: "Governança Global, Desenvolvimento Sustentável e Comunidades Tradicionais", polo: "Camocim", vagas: 34 },
+            { curso: "Governança Global, Desenvolvimento Sustentável e Comunidades Tradicionais", polo: "Caucaia - Novo Pabussu", vagas: 35 },
+            { curso: "Governança Global, Desenvolvimento Sustentável e Comunidades Tradicionais", polo: "Fortaleza", vagas: 35 },
+            { curso: "Governança Global, Desenvolvimento Sustentável e Comunidades Tradicionais", polo: "Itapipoca", vagas: 34 },
+            { curso: "Governança Global, Desenvolvimento Sustentável e Comunidades Tradicionais", polo: "Itarema", vagas: 34 },
+            { curso: "Letras/Literatura", polo: "Cascavel", vagas: 30 },
+            { curso: "Letras/Literatura", polo: "Iguatu", vagas: 30 },
+            { curso: "Letras/Literatura", polo: "Nova Russas", vagas: 30 },
+            { curso: "Letras/Literatura", polo: "Pires Ferreira", vagas: 30 },
+            { curso: "Letras/Literatura", polo: "Tianguá", vagas: 30 },
+            { curso: "Tradução Audiovisual Acessível/ Legendagem p/surdos e ensurdecidos", polo: "Aracoiaba", vagas: 34 },
+            { curso: "Tradução Audiovisual Acessível/ Legendagem p/surdos e ensurdecidos", polo: "Beberibe", vagas: 34 },
+            { curso: "Tradução Audiovisual Acessível/ Legendagem p/surdos e ensurdecidos", polo: "Canindé", vagas: 34 },
+            { curso: "Tradução Audiovisual Acessível/ Legendagem p/surdos e ensurdecidos", polo: "Iguatu", vagas: 34 },
+            { curso: "Tradução Audiovisual Acessível/ Legendagem p/surdos e ensurdecidos", polo: "Jaguaribe", vagas: 34 },
+            { curso: "Turismo com habilitação em base comunitária", polo: "Assaré", vagas: 30 },
+            { curso: "Turismo com habilitação em base comunitária", polo: "Limoeiro do Norte", vagas: 30 },
+            { curso: "Turismo com habilitação em base comunitária", polo: "Meruoca", vagas: 30 },
+            { curso: "Turismo com habilitação em base comunitária", polo: "Pacoti", vagas: 30 },
+            { curso: "Turismo com habilitação em base comunitária", polo: "Tianguá", vagas: 30 },
+        ];
+
+        const polosData = [
+            { cidade: "Amontada", responsavel: "Maria Divani Alves Gomes", fone: "(88) 99713-0169", email: "polouabamontada@gmail.com", endereco: "Rua Marfins Teixeira, 1780 Bairro Torres, Amontada-CE" },
+            { cidade: "Aquiraz", responsavel: "Flávio Henrique Moreira Gonzaga", fone: "(85) 94062-8090", email: "flaviohemoreira@gmail.com", endereco: "Casa do Saber Justiniano de Serpa. Praça das Flores S/N Bairro Centro, Aquiraz-CE" },
+            { cidade: "Aracati", responsavel: "Pedro Henrique de Lima", fone: "(88) 99947-7412", email: "pedro.henrique@aracati.ce.gov.br", endereco: "Rua Farias Brito, s/n. Bairro Farias Brito, Aracati-CE" },
+            { cidade: "Aracoiaba", responsavel: "João Ferreira Antero Neto", fone: "(85) 99911-2360", email: "joaofantero@gmail.com", endereco: "Av. Manoel Batista da Silva S/N Conjunto Solón Lima Verde, Aracoiaba-CE" },
+            { cidade: "Assaré", responsavel: "Roberto de Almeida Lima", fone: "(88) 99854-6069", email: "assare.cead@ufca.edu.br", endereco: "Rua Vereador Francisco de Assis Freitas, s/n Bairro: Centro, Assaré-CE" },
+            { cidade: "Baturité", responsavel: "Sulamita Torres de Oliveira", fone: "(85) 99633-5338", email: "Educação@baturite.ce.gov.br", endereco: "Av. Dom Bosco, 393 Bairro Centro, Baturité-CE" },
+            { cidade: "Beberibe", responsavel: "Maria Virginia Tavares Cruz", fone: "(85) 3338-2035", email: "virginia_tavares@yahoo.com.br", endereco: "Rua José Bessa, 299 Bairro Centro, Beberibe-CE" },
+            { cidade: "Boa Viagem", responsavel: "Antônio Cícero do Vale Dias", fone: "(88) 99935-4777", email: "uabboaviagemce@gmail.com", endereco: "Rua José Rangel de Araújo, 22, Boa Viagem-CE" },
+            { cidade: "Camocim", responsavel: "Josina do Nascimento de Araújo", fone: "(88) 99618-2878", email: "uabpolocamocim@hotmail.com", endereco: "Praça Deputado Murilo Aguiar S/N Bairro Centro, Camocim-CE" },
+            { cidade: "Campos Sales", responsavel: "Elisa Juniana Delmondes de Souza", fone: "(88) 996843956", email: "uab_polocs@yahoo.com.br", endereco: "Rua; Emiliano Fortaleza S/N. Bairro; Alto Alegre, Campos Sales-CE" },
+            { cidade: "Canindé", responsavel: "Arleise Rodrigues de Matos Martins", fone: "(85) 3343-0235", email: "uab.caninde@gmail.com", endereco: "Rua Francisca Adenise Cordeiro, 1111 Bairro Bela Vista, Canindé-CE" },
+            { cidade: "Cascavel", responsavel: "Webster Guerreiro Belmino", fone: "(85) 99881-5543", email: "polouabcascavelceara@gmail.com", endereco: "Av. Coronel Leite, 2045 Bairro Centro, Cascavel-CE" },
+            { cidade: "Caucaia - Novo Pabussu", responsavel: "Francisco da Silva Moreira", fone: "(85) 98418-3800", email: "fsmoreira2009@gmail.com", endereco: "Rua da Consolação, 465 Bairro Novo Pabussu, Caucaia-CE" },
+            { cidade: "Caucaia Araturi", responsavel: "Marcia Heleonizia Sena dos Reis", fone: "(85) 98858 2145", email: "polouabcaucaiaaraturi@gmail.com", endereco: "Rua Santa Marta, n35- Bairro Araturi, Caucaia-CE" },
+            { cidade: "Crateús", responsavel: "Daniel Henrique de Oliveira Silva", fone: "(88) 3691-0822", email: "polouab.crateus@uece.br", endereco: "Rua José Sabóia Livreiro, 1489 Bairro Fátima I, Crateús-CE" },
+            { cidade: "Fortaleza", responsavel: "Camila Assis de Sousa Soares", fone: "(85) 99863 2286", email: "camila.soares@educacao.ce.gov.br", endereco: "Rua Dona Leopoldina, 907, bairro Centro, Fortaleza-CE" },
+            { cidade: "Granja", responsavel: "Cilas Frota Saldanha", fone: "(88) 9 9621-7049", email: "seducgranja@gmail.com", endereco: "Avenida Perimetral, S/N, Bairro: Centro, Granja-CE" },
+            { cidade: "Horizonte", responsavel: "Monique Enéas Lourenço", fone: "(85) 3366-6008", email: "Educação@horizonte.ce.gov.br", endereco: "Rua Francisco Eudes Ximenes, 83 Bairro Centro, Horizonte-CE" },
+            { cidade: "Iguatu", responsavel: "Fernando Roberto Ferreira Silva", fone: "(85) 3581-9455", email: "fecli@uece.br", endereco: "Avenida Dário Rabelo, S/N Bairro Santo Antônio, Iguatu-CE" },
+            { cidade: "Itapipoca", responsavel: "Isabela de Melo Rodrigues", fone: "(88)999424699", email: "isabelademelor@gmail.com", endereco: "Rua João Cordeiro, S/N Coqueiro, Itapipoca-CE" },
+            { cidade: "Itarema", responsavel: "Francisco Clênio Souza Marques", fone: "(88) 3667-1132", email: "clenio_marques@hotmail.com", endereco: "Praça Nossa Senhora de Fátima, S/N Bairro Centro, Itarema-CE" },
+            { cidade: "Jaguaribe", responsavel: "Tereza Maria Peixoto Silva Rufino Mourão", fone: "(88) 99965-2232", email: "jaguaribepolouab@gmail.com", endereco: "Av. Gil Teixeira Bastos, 1420 Bairro Nova Brasília, Jaguaribe-CE" },
+            { cidade: "Juazeiro do Norte", responsavel: "Djailson Ricardo Malheiro", fone: "(88) 99986-7595", email: "uab@seduc.juazeiro.ce.gov.br", endereco: "Avenida Ailton Gomes, s/n. Bairro Pirajá (Escola Demóstenes Ratts Barbosa), Juazeiro do Norte-CE" },
+            { cidade: "Lavras da Mangabeira", responsavel: "Marlon George Sousa Morais", fone: "(88) 3536-1607", email: "marlon.george@hotmail.com", endereco: "Rua Hilda Augusto, 429 Bairro Rosário, Lavras da Mangabeira-CE" },
+            { cidade: "Limoeiro do Norte", responsavel: "Belarmino Franklin Silva Duarte", fone: "(88) 99911-8989", email: "uabpololimoeiro@gmail.com", endereco: "Rua José Hamilton de Oliveira, 160 Bairro Centro, Limoeiro do Norte-CE" },
+            { cidade: "Maracanaú", responsavel: "Jaiane Ramos Barbosa", fone: "(85) 3383-3883", email: "uab_seduc@maracanau.ce.gov.br", endereco: "Rua Pe. José Holanda do Vale, 2071 Parque Piratininga, Maracanaú-CE" },
+            { cidade: "Maranguape", responsavel: "Juliana Campos Lage", fone: "(85) 99911-0134", email: "polouabmaranguape@gmail.com", endereco: "Rua Walter Lopes, 149, Bairro Centro, Maranguape-CE" },
+            { cidade: "Mauriti", responsavel: "Tarciano Gomes de Moraes", fone: "(88) 99448-6380", email: "polouabmauriti@mauriti.ce.gov.br", endereco: "Rua Pe. Argemiro Rolim de Oliveira, 630 Bairro Serrinha, Mauriti-CE" },
+            { cidade: "Meruoca", responsavel: "Joselena Gomes Gertrudes", fone: "(88) 992844388", email: "joselenagg@gmail.com", endereco: "Praça Caetano Marques, s/nº Antigo Patronato Dom José, Centro, MERUOCA-CE" },
+            { cidade: "Mombaça", responsavel: "Leonardo Torres Marques", fone: "(88) 3581-9455", email: "leonardo.torres@uece.br", endereco: "Fazenda Amontada S/N Bairro Centro, Mombaça-CE" },
+            { cidade: "Nova Russas", responsavel: "Valéria Chaves Sousa Martins", fone: "(88) 99992-1931", email: "polouabnovarussas@gmail.com", endereco: "Av. João Gregório Timbó, S/N Bairro Universidade, Nova Russas-CE" },
+            { cidade: "Orós", responsavel: "Flavio Jose Ferreira Feitosa", fone: "(88) 3584-1461", email: "polodjalvo2015@gmail.com", endereco: "Travessa Dr. Rosevaldo, S/N Bairro Centro, Orós-CE" },
+            { cidade: "Pacoti", responsavel: "Francisco Levi Jucá Sales", fone: "(85) 99758-8285", email: "polouabpacoti@gmail.com", endereco: "Rua Pe. Quiliano, 205 Bairro Centro, Pacoti-CE" },
+            { cidade: "Parambu", responsavel: "Vilanir Rodrigues Lima", fone: "(88) 3448-1314", email: "poloparambuuab@gmail.com", endereco: "Rua 07 de setembro, 120 Bairro Centro, Parambu-CE" },
+            { cidade: "Pedra Branca", responsavel: "Maria Darc Campelo de Matos Carvalho", fone: "(88) 3515-2441", email: "polouabpedrabranca@gmail.com", endereco: "Av. Sabino Vieira Cavalcante, 320 Bairro Santa Úrsula, Pedra Branca-CE" },
+            { cidade: "Piquet Carneiro", responsavel: "Patrícia Barros Bezerra Cruz", fone: "(88) 3516-1300", email: "polouab.piquetcarneiro@gmail.com", endereco: "Rua Zacarias Pinheiro, S/N Bairro Centro, Piquet Carneiro-CE" },
+            { cidade: "Pires Ferreira", responsavel: "Antônia Erica Rodrigues Costa", fone: "(88) 99774-0699", email: "polouabpiresferreira@gmail.com", endereco: "Localidade de Olheiros, s/nº, Pires Ferreira-CE" },
+            { cidade: "Quixadá", responsavel: "Terezinha de Lisieux Moreira da Costa", fone: "(88) 99949-7044", email: "polouabquixada@gmail.com", endereco: "Rua Coronel Nanan, S/N Bairro Centro, Quixadá-CE" },
+            { cidade: "Quixeramobim", responsavel: "Waldirene Maria Pinheiro de Melo", fone: "(88) 99800-5094", email: "uabacademico@gmail.com", endereco: "Av. Dr. Joaquim Fernandes, 382 Bairro Centro, Quixeramobim-CE" },
+            { cidade: "Russas", responsavel: "Francisco Júnior Holanda Gadelha", fone: "(88) 3411-2769", email: "junior@centec.org.br", endereco: "Travessa Pedro Araújo, S/N, Bairro Ypiranga, Russas-CE" },
+            { cidade: "São Gonçalo do Amarante", responsavel: "Jorge Luis Gomes Mendonça", fone: "(85) 3315-4503", email: "uabsaogoncalopolos@gmail.com", endereco: "Estrada da Liberdade, S/N Bairro Liberdade, São Gonçalo do Amarante-CE" },
+            { cidade: "Sobral", responsavel: "Nairley Cardoso Sá Firmino", fone: "(88) 3695-1950", email: "uabsobral@gmail.com", endereco: "Rua Dona Iolanda P.C. Barreto, 317 Bairro Derby Clube, Sobral-CE" },
+            { cidade: "Tabuleiro do Norte", responsavel: "Adelyany Lima Mendes", fone: "(88) 3434-3810", email: "semeb@tabuleirodonorte.ce.gov.br", endereco: "Rua Manoel Franklin, 5033 Bairro 8 de setembro, Tabuleiro do Norte-CE" },
+            { cidade: "Tianguá", responsavel: "Maria da Conceição de Araújo", fone: "(88) 99235-8589", email: "polouabtiangua@edu.tiangua.ce.gov.br", endereco: "Rua São Sebastião, S/N Bairro Distrito de Acarape, Tianguá-CE" },
+            { cidade: "Trairi", responsavel: "Francisco Borges da Silva", fone: "(85) 999552463", email: "chiquinhoborges79@gmail.com", endereco: "Rua Dr. Celso Barroso, 124. Bairro: Centro, Trairi-CE" },
+        ];
+        
+        const cronogramaData = [
+            { data: "2025-06-02", evento: "Início do Período de Inscrição" },
+            { data: "2025-06-21", evento: "Fim do Período de Inscrição e data limite para pagamento" },
+            { data: "2025-06-26", evento: "Resultado da análise dos requerimentos de inscrição" },
+            { data: "2025-06-27", evento: "Período para recurso contra indeferimento da inscrição" },
+            { data: "2025-07-03", evento: "Resultado do julgamento dos recursos da inscrição" },
+            { data: "2025-07-10", evento: "Aplicação da Prova on-line" },
+            { data: "2025-07-11", evento: "Período para recurso contra questões da prova" },
+            { data: "2025-07-17", evento: "Divulgação dos habilitados para a 2ª Etapa (Avaliação de Títulos)" },
+            { data: "2025-07-18", evento: "Início do período de Avaliação de Títulos" },
+            { data: "2025-07-25", evento: "Fim do período de Avaliação de Títulos" },
+            { data: "2025-07-28", evento: "Resultado da Avaliação de Títulos" },
+            { data: "2025-07-29", evento: "Período para recurso do resultado da Avaliação de Títulos" },
+            { data: "2025-08-01", evento: "Resultado do julgamento dos recursos da Avaliação de Títulos" },
+            { data: "2025-08-04", evento: "Resultado final da Seleção" },
+            { data: "2025-08-06", evento: "Início do período de matrícula" },
+            { data: "2025-08-12", evento: "Fim do período de matrícula" },
+            { data: "2025-08-15", evento: "Início das aulas (previsto)" }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const listaCursosEl = document.getElementById('lista-cursos');
+            const filtroCursoEl = document.getElementById('filtro-curso');
+            const filtroPoloEl = document.getElementById('filtro-polo');
+            const nenhumCursoEl = document.getElementById('nenhum-curso');
+
+            const listaPolosEl = document.getElementById('lista-polos');
+            const filtroPoloContatoEl = document.getElementById('filtro-polo-contato');
+            const nenhumPoloEl = document.getElementById('nenhum-polo');
+
+            const timelineContainerEl = document.getElementById('timeline-container');
+            
+            function popularFiltroPolos() {
+                const polos = [...new Set(cursosData.map(c => c.polo))].sort();
+                polos.forEach(polo => {
+                    const option = document.createElement('option');
+                    option.value = polo;
+                    option.textContent = polo;
+                    filtroPoloEl.appendChild(option);
+                });
+            }
+
+            function renderizarCursos() {
+                const termoCurso = filtroCursoEl.value.toLowerCase();
+                const poloSelecionado = filtroPoloEl.value;
+
+                const cursosFiltrados = cursosData.filter(c => {
+                    const matchCurso = c.curso.toLowerCase().includes(termoCurso);
+                    const matchPolo = poloSelecionado ? c.polo === poloSelecionado : true;
+                    return matchCurso && matchPolo;
+                });
+                
+                listaCursosEl.innerHTML = '';
+                if (cursosFiltrados.length === 0) {
+                    nenhumCursoEl.style.display = 'block';
+                } else {
+                     nenhumCursoEl.style.display = 'none';
+                }
+
+                cursosFiltrados.forEach(c => {
+                    const card = `
+                        <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-500 hover:shadow-xl transition-shadow">
+                            <h3 class="font-bold text-lg text-gray-800">${c.curso}</h3>
+                            <p class="text-gray-600 mt-2">${c.polo}</p>
+                            <div class="mt-4 bg-blue-100 text-blue-800 font-bold text-sm inline-block px-3 py-1 rounded-full">
+                                ${c.vagas} vagas
+                            </div>
+                        </div>
+                    `;
+                    listaCursosEl.innerHTML += card;
+                });
+            }
+
+            function renderizarPolos() {
+                const termoPolo = filtroPoloContatoEl.value.toLowerCase();
+                const polosFiltrados = polosData.filter(p => p.cidade.toLowerCase().includes(termoPolo));
+
+                listaPolosEl.innerHTML = '';
+                 if (polosFiltrados.length === 0) {
+                    nenhumPoloEl.style.display = 'block';
+                } else {
+                     nenhumPoloEl.style.display = 'none';
+                }
+
+                polosFiltrados.forEach(p => {
+                    const card = `
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="font-bold text-lg text-gray-800">${p.cidade}</h3>
+                            <p class="text-gray-600 mt-2">${p.endereco}</p>
+                            <div class="mt-4 text-sm space-y-1">
+                                <p><span class="font-semibold">Responsável:</span> ${p.responsavel}</p>
+                                <p><span class="font-semibold">Fone:</span> ${p.fone}</p>
+                                <p><span class="font-semibold">Email:</span> ${p.email}</p>
+                            </div>
+                        </div>
+                    `;
+                    listaPolosEl.innerHTML += card;
+                });
+            }
+            
+            function renderizarCronograma() {
+                const hoje = new Date();
+                hoje.setHours(0, 0, 0, 0); 
+                let proximoEventoMarcado = false;
+
+                cronogramaData.forEach(evento => {
+                    const dataEvento = new Date(evento.data + 'T03:00:00Z');
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'mb-8 relative timeline-item';
+                    
+                    if (!proximoEventoMarcado && dataEvento >= hoje) {
+                        itemDiv.classList.add('highlight');
+                        proximoEventoMarcado = true;
+                    }
+                    
+                    const dataFormatada = dataEvento.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                    
+                    itemDiv.innerHTML = `
+                        <p class="font-bold text-blue-600">${dataFormatada}</p>
+                        <h4 class="text-lg font-semibold text-gray-700">${evento.evento}</h4>
+                    `;
+                    timelineContainerEl.appendChild(itemDiv);
+                });
+            }
+
+            function renderizarGraficoVagas() {
+                const vagasPorCurso = cursosData.reduce((acc, curr) => {
+                    acc[curr.curso] = (acc[curr.curso] || 0) + curr.vagas;
+                    return acc;
+                }, {});
+
+                const sortedCursos = Object.entries(vagasPorCurso)
+                    .sort(([, a], [, b]) => b - a)
+                    .slice(0, 10); 
+                
+                const labels = sortedCursos.map(item => item[0]);
+                const data = sortedCursos.map(item => item[1]);
+
+                const ctx = document.getElementById('vagasChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels.map(label => {
+                            if (label.length > 25) {
+                                return label.split(' ').reduce((lines, word) => {
+                                    if (!lines.length) {
+                                        return [word];
+                                    }
+                                    let lastLine = lines[lines.length - 1];
+                                    if (lastLine.length + word.length + 1 <= 25) {
+                                        lines[lines.length - 1] = lastLine + ' ' + word;
+                                    } else {
+                                        lines.push(word);
+                                    }
+                                    return lines;
+                                }, []);
+                            }
+                            return label;
+                        }),
+                        datasets: [{
+                            label: 'Total de Vagas',
+                            data: data,
+                            backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                            borderColor: 'rgba(59, 130, 246, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        indexAxis: 'y',
+                        scales: {
+                            x: {
+                                beginAtZero: true
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    title: function(tooltipItems) {
+                                        const item = tooltipItems[0];
+                                        let label = item.chart.data.labels[item.dataIndex];
+                                        if (Array.isArray(label)) {
+                                          return label.join(' ');
+                                        } else {
+                                          return label;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            popularFiltroPolos();
+            renderizarCursos();
+            renderizarPolos();
+            renderizarCronograma();
+            renderizarGraficoVagas();
+
+            filtroCursoEl.addEventListener('keyup', renderizarCursos);
+            filtroPoloEl.addEventListener('change', renderizarCursos);
+            filtroPoloContatoEl.addEventListener('keyup', renderizarPolos);
+        });
+    </script>
+</body>
+</html>
