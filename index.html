@@ -50,10 +50,10 @@
             width: 3px;
             background-color: var(--govce-border-color);
         }
-        .process-card {
+        .process-card, .link-card {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        .process-card:hover {
+        .process-card:hover, .link-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
         }
@@ -84,6 +84,21 @@
         <section id="hero" class="govce-hero text-white text-center py-20 md:py-28 rounded-3xl my-12">
             <h1 class="text-4xl md:text-6xl font-extrabold mb-4 drop-shadow-md">Pós-Graduação a Distância UECE/UAB</h1>
             <p class="text-lg md:text-xl max-w-3xl mx-auto opacity-90">Chamada Pública Nº 55/2025: Explore o seu futuro com a chancela do Governo do Estado do Ceará.</p>
+        </section>
+
+        <section id="acesso-rapido" class="py-16">
+            <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+                <a href="https://www.uece.br/sate/wp-content/uploads/sites/58/2025/05/CP55.25-Edital.pdf" target="_blank" rel="noopener noreferrer" class="link-card block bg-white p-8 rounded-xl shadow-lg text-center">
+                    <div class="text-5xl mb-4">📢</div>
+                    <h3 class="text-2xl font-bold" style="color: var(--govce-dark-text);">Consultar Edital</h3>
+                    <p class="text-slate-600 mt-2">Acesse o documento oficial com todas as regras e informações do processo seletivo.</p>
+                </a>
+                <a href="https://forms.gle/1LB7mb58QmZaUKNM6" target="_blank" rel="noopener noreferrer" class="link-card block bg-white p-8 rounded-xl shadow-lg text-center">
+                    <div class="text-5xl mb-4">✍️</div>
+                    <h3 class="text-2xl font-bold" style="color: var(--govce-dark-text);">Formulário de Inscrição</h3>
+                    <p class="text-slate-600 mt-2">Pronto para começar? Clique aqui para preencher sua inscrição e garantir sua vaga.</p>
+                </a>
+            </div>
         </section>
 
         <section id="cursos" class="py-16">
@@ -475,11 +490,21 @@
             }
             
             function getIconForCourse(courseName) {
-                if (courseName.toLowerCase().includes('gestão') || courseName.toLowerCase().includes('auditoria') || courseName.toLowerCase().includes('contabilidade')) return '📊';
-                if (courseName.toLowerCase().includes('educação') || courseName.toLowerCase().includes('alfabetização') || courseName.toLowerCase().includes('letras')) return '📚';
-                if (courseName.toLowerCase().includes('tecnologia') || courseName.toLowerCase().includes('ciência') || courseName.toLowerCase().includes('matemática')) return '�';
-                if (courseName.toLowerCase().includes('saúde')) return '❤️';
-                if (courseName.toLowerCase().includes('turismo') || courseName.toLowerCase().includes('governança') || courseName.toLowerCase().includes('sustentabilidade')) return '🌍';
+                const lowerCaseName = courseName.toLowerCase();
+                if (lowerCaseName.includes('gestão escolar') || lowerCaseName.includes('gestão pública')) return '🏛️';
+                if (lowerCaseName.includes('auditoria') || lowerCaseName.includes('controladoria')) return '💹';
+                if (lowerCaseName.includes('contabilidade')) return '🧾';
+                if (lowerCaseName.includes('letras/literatura')) return '✍️';
+                if (lowerCaseName.includes('educação e diversidades')) return '🧑‍🤝‍🧑';
+                if (lowerCaseName.includes('educação física')) return '🏃‍♂️';
+                if (lowerCaseName.includes('alfabetização')) return '📚';
+                if (lowerCaseName.includes('ciência é 10')) return '🧪';
+                if (lowerCaseName.includes('ensino de matemática')) return '➗';
+                if (lowerCaseName.includes('saúde')) return '❤️';
+                if (lowerCaseName.includes('tradução audiovisual')) return '🎬';
+                if (lowerCaseName.includes('cultura oceanica')) return '🌊';
+                if (lowerCaseName.includes('governança') || lowerCaseName.includes('sustentabilidade')) return '🌿';
+                if (lowerCaseName.includes('turismo')) return '✈️';
                 return '🎓';
             }
 
@@ -600,4 +625,3 @@
     </script>
 </body>
 </html>
-�
