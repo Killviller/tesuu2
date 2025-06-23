@@ -13,7 +13,6 @@
     <!-- Application Structure Plan: A single-page application with a sticky top navigation bar for quick access to key sections. The structure is task-oriented, designed to answer user questions sequentially: What courses are available? (Interactive Dashboard), What is the process? (Visual Stepper), What are the deadlines? (Interactive Timeline), How do I pay? (Clear Guide), and Where is my local support center? (Searchable List). This non-linear, user-centric structure is superior to the original PDF's linear format, allowing candidates to find relevant information instantly without navigating dense text. -->
     <!-- Visualization & Content Choices: 
         - Report Info: Full list of courses/vacancies -> Goal: Organize/Explore -> Viz/Method: Interactive Card Grid with Filters -> Interaction: Dropdown/text input filters for course and polo -> Justification: The original table is too long. Filtering allows users to quickly find relevant opportunities. -> Library/Method: Vanilla JS, Tailwind CSS.
-        - Report Info: Total vacancies per course -> Goal: Compare -> Viz/Method: Bar Chart -> Interaction: Hover for details -> Justification: Provides a quick overview of the most popular programs, aiding decision-making. -> Library/Method: Chart.js (Canvas).
         - Report Info: Multi-step selection process -> Goal: Organize -> Viz/Method: HTML/CSS Stepper -> Interaction: Static -> Justification: A visual stepper is more intuitive for understanding a multi-stage process than a text block. -> Library/Method: HTML/Tailwind.
         - Report Info: Full timeline of events -> Goal: Change/Inform -> Viz/Method: Vertical Timeline with Dynamic Highlighting -> Interaction: JS highlights the next upcoming event -> Justification: Immediately answers "what's next?" for the user. -> Library/Method: Vanilla JS, Tailwind CSS.
         - Report Info: Payment/Polo information -> Goal: Inform/Explore -> Viz/Method: Comparison boxes and a searchable list -> Interaction: Static and Search Input -> Justification: Prevents user error in payment and provides faster access to contact info than a static list. -> Library/Method: HTML/Tailwind, Vanilla JS. -->
@@ -23,22 +22,6 @@
             font-family: 'Inter', sans-serif;
             background-color: #F8F7F4;
             color: #4A4A4A;
-        }
-        .sticky-nav {
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 400px;
-            max-height: 50vh;
         }
         .timeline-item::before {
             content: '';
@@ -66,21 +49,6 @@
     </style>
 </head>
 <body class="antialiased">
-
-    <header class="sticky-nav bg-white/80 shadow-sm">
-        <nav class="container mx-auto px-6 py-3">
-            <div class="flex justify-between items-center">
-                <div class="text-xl font-bold text-gray-800">UECE/UAB</div>
-                <div class="hidden md:flex space-x-8">
-                    <a href="#cursos" class="text-gray-600 hover:text-blue-500">Cursos</a>
-                    <a href="#processo" class="text-gray-600 hover:text-blue-500">Processo Seletivo</a>
-                    <a href="#cronograma" class="text-gray-600 hover:text-blue-500">Cronograma</a>
-                    <a href="#inscricao" class="text-gray-600 hover:text-blue-500">Inscrição</a>
-                    <a href="#polos" class="text-gray-600 hover:text-blue-500">Polos</a>
-                </div>
-            </div>
-        </nav>
-    </header>
 
     <main class="container mx-auto px-6 py-12">
 
@@ -117,6 +85,7 @@
             <div class="text-center mt-12" id="nenhum-curso" style="display: none;">
                 <p class="text-gray-500 text-lg">Nenhum curso encontrado com os filtros aplicados.</p>
             </div>
+
         </section>
 
         <section id="processo" class="py-16 bg-blue-50/50 rounded-lg">
@@ -222,13 +191,6 @@
         </section>
         
     </main>
-
-    <footer class="bg-gray-800 text-white py-8">
-        <div class="container mx-auto px-6 text-center">
-            <p>Esta é uma aplicação não oficial, criada para facilitar a visualização das informações da Chamada Pública N° 55/2025.</p>
-            <p class="mt-2 text-sm text-gray-400">Todas as informações devem ser confirmadas no site oficial: <a href="http://www.uece.br/sate" class="underline hover:text-blue-300">www.uece.br/sate</a>.</p>
-        </div>
-    </footer>
 
     <script>
         const cursosData = [
@@ -502,84 +464,10 @@
                 });
             }
 
-            function renderizarGraficoVagas() {
-                const vagasPorCurso = cursosData.reduce((acc, curr) => {
-                    acc[curr.curso] = (acc[curr.curso] || 0) + curr.vagas;
-                    return acc;
-                }, {});
-
-                const sortedCursos = Object.entries(vagasPorCurso)
-                    .sort(([, a], [, b]) => b - a)
-                    .slice(0, 10); 
-                
-                const labels = sortedCursos.map(item => item[0]);
-                const data = sortedCursos.map(item => item[1]);
-
-                const ctx = document.getElementById('vagasChart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels.map(label => {
-                            if (label.length > 25) {
-                                return label.split(' ').reduce((lines, word) => {
-                                    if (!lines.length) {
-                                        return [word];
-                                    }
-                                    let lastLine = lines[lines.length - 1];
-                                    if (lastLine.length + word.length + 1 <= 25) {
-                                        lines[lines.length - 1] = lastLine + ' ' + word;
-                                    } else {
-                                        lines.push(word);
-                                    }
-                                    return lines;
-                                }, []);
-                            }
-                            return label;
-                        }),
-                        datasets: [{
-                            label: 'Total de Vagas',
-                            data: data,
-                            backgroundColor: 'rgba(59, 130, 246, 0.7)',
-                            borderColor: 'rgba(59, 130, 246, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        indexAxis: 'y',
-                        scales: {
-                            x: {
-                                beginAtZero: true
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                display: false
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    title: function(tooltipItems) {
-                                        const item = tooltipItems[0];
-                                        let label = item.chart.data.labels[item.dataIndex];
-                                        if (Array.isArray(label)) {
-                                          return label.join(' ');
-                                        } else {
-                                          return label;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-
             popularFiltroPolos();
             renderizarCursos();
             renderizarPolos();
             renderizarCronograma();
-            renderizarGraficoVagas();
 
             filtroCursoEl.addEventListener('keyup', renderizarCursos);
             filtroPoloEl.addEventListener('change', renderizarCursos);
